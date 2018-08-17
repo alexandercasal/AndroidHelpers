@@ -19,6 +19,7 @@ package com.alexandercasal.androidhelpers.livedata
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
 /**
@@ -59,5 +60,17 @@ inline fun <T> LiveData<T>.observeNonNull(owner: LifecycleOwner, crossinline obs
         it?.let {
             observer(it)
         }
+    }
+}
+
+fun <T> MutableLiveData<T>.updateIfChanged(newValue: T) {
+    if (value != newValue) {
+        value = newValue
+    }
+}
+
+fun <T> MutableLiveData<T>.postIfChanged(newValue: T) {
+    if (value != newValue) {
+        postValue(newValue)
     }
 }

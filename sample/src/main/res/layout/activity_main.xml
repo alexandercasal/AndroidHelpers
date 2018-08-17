@@ -69,12 +69,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{wordPref}"
-            tools:text="sample"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/decimalTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/decimalTextView"
+            app:layout_constraintBottom_toBottomOf="@id/counter"
+            tools:text="sample"
+            />
+
+        <Button
+            android:id="@+id/counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Click Me"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/wordTextView"
+            app:layout_constraintStart_toStartOf="@+id/wordTextView"
+            app:layout_constraintTop_toBottomOf="@+id/wordTextView"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
