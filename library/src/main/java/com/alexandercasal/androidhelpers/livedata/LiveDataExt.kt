@@ -49,7 +49,7 @@ fun <T> LiveData<T>.getDistinct(): LiveData<T> {
     return distinctLiveData
 }
 
-inline fun <T> LiveData<T>.observe(owner: LifecycleOwner, crossinline observer: (t: T) -> Unit) {
+inline fun <T> LiveData<T>.observe(owner: LifecycleOwner, crossinline observer: (t: T?) -> Unit) {
     observe(owner, Observer {
         observer(it)
     })
