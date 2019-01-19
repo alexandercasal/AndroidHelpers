@@ -6,6 +6,7 @@ import com.alexandercasal.androidhelpers.sharedprefs.livedata.BooleanSharedPrefs
 import com.alexandercasal.androidhelpers.sharedprefs.livedata.FloatSharedPrefsLiveData
 import com.alexandercasal.androidhelpers.sharedprefs.livedata.IntSharedPrefsLiveData
 import com.alexandercasal.androidhelpers.sharedprefs.livedata.LongSharedPrefsLiveData
+import com.alexandercasal.androidhelpers.sharedprefs.livedata.StringSetSharedPrefsLiveData
 import com.alexandercasal.androidhelpers.sharedprefs.livedata.StringSharedPrefsLiveData
 import java.lang.IllegalArgumentException
 import kotlin.properties.ReadWriteProperty
@@ -65,5 +66,21 @@ abstract class SharedPrefs(private val context: Context, private val fileName: S
                 else -> throw IllegalArgumentException("Unsupported type for SharedPrefsLiveData: $defValue")
             } as LiveData<T>
         }
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    inner class StringSetPref(private val defValue: MutableSet<String>?, val key: String) : ReadWriteProperty<SharedPrefs, MutableSet<String>?> {
+        var value: MutableSet<String>? = defValue
+
+        override fun getValue(thisRef: SharedPrefs, property: KProperty<*>): MutableSet<String>? {
+            return sharedPreferences.getStringSet(key, defValue)
+        }
+
+        override fun setValue(thisRef: SharedPrefs, property: KProperty<*>, value: MutableSet<String>?) {
+            this.value = value
+            sharedPreferences.edit().putStringSet(key, value).apply()
+        }
+
+        fun toLiveData(): LiveData<Set<String>?> = StringSetSharedPrefsLiveData(sharedPreferences, defValue, key)
     }
 }
