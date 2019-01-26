@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-        versionCode 6
-        versionName "1.0-beta6"
+        versionCode 7
+        versionName "1.0-beta07"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

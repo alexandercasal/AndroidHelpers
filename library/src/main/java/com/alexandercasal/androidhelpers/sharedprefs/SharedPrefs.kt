@@ -25,7 +25,7 @@ abstract class SharedPrefs(private val context: Context, private val fileName: S
     fun stringPref(defValue: String = "", key: String) = Pref(defValue, key)
 
     @Suppress("MemberVisibilityCanBePrivate")
-    inner class Pref<T>(private val defValue: T, val key: String) : ReadWriteProperty<SharedPrefs, T> {
+    inner class Pref<T>(val defValue: T, val key: String) : ReadWriteProperty<SharedPrefs, T> {
         var value: T = defValue
 
         @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
@@ -41,18 +41,20 @@ abstract class SharedPrefs(private val context: Context, private val fileName: S
         }
 
         override fun setValue(thisRef: SharedPrefs, property: KProperty<*>, value: T) {
-            this.value = value
-            val editor = sharedPreferences.edit()
+            if (this.value != value) {
+                this.value = value
+                val editor = sharedPreferences.edit()
 
-            when (value) {
-                is Boolean -> editor.putBoolean(key, value)
-                is Float -> editor.putFloat(key, value)
-                is Int -> editor.putInt(key, value)
-                is Long -> editor.putLong(key, value)
-                is String -> editor.putString(key, value)
-                else -> error("Invalid type for SharedPreferences: $value")
+                when (value) {
+                    is Boolean -> editor.putBoolean(key, value)
+                    is Float -> editor.putFloat(key, value)
+                    is Int -> editor.putInt(key, value)
+                    is Long -> editor.putLong(key, value)
+                    is String -> editor.putString(key, value)
+                    else -> error("Invalid type for SharedPreferences: $value")
+                }
+                editor.apply()
             }
-            editor.apply()
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -69,16 +71,18 @@ abstract class SharedPrefs(private val context: Context, private val fileName: S
     }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    inner class StringSetPref(private val defValue: MutableSet<String>?, val key: String) : ReadWriteProperty<SharedPrefs, MutableSet<String>?> {
-        var value: MutableSet<String>? = defValue
+    inner class StringSetPref(val defValue: Set<String>?, val key: String) : ReadWriteProperty<SharedPrefs, Set<String>?> {
+        var value: Set<String>? = defValue
 
-        override fun getValue(thisRef: SharedPrefs, property: KProperty<*>): MutableSet<String>? {
+        override fun getValue(thisRef: SharedPrefs, property: KProperty<*>): Set<String>? {
             return sharedPreferences.getStringSet(key, defValue)
         }
 
-        override fun setValue(thisRef: SharedPrefs, property: KProperty<*>, value: MutableSet<String>?) {
-            this.value = value
-            sharedPreferences.edit().putStringSet(key, value).apply()
+        override fun setValue(thisRef: SharedPrefs, property: KProperty<*>, value: Set<String>?) {
+            if (this.value != value) {
+                this.value = value
+                sharedPreferences.edit().putStringSet(key, value).apply()
+            }
         }
 
         fun toLiveData(): LiveData<Set<String>?> = StringSetSharedPrefsLiveData(sharedPreferences, defValue, key)
