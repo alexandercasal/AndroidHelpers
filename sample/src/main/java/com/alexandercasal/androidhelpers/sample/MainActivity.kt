@@ -1,53 +1,81 @@
 package com.alexandercasal.androidhelpers.sample
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.alexandercasal.androidhelpers.livedata.observe
+import com.alexandercasal.androidhelpers.livedata.observeNonNull
 import com.alexandercasal.androidhelpers.sample.databinding.ActivityMainBinding
-import com.alexandercasal.androidhelpers.sample.prefs.SamplePrefs
-import java.util.Random
+import com.jakewharton.threetenabp.AndroidThreeTen
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
-    lateinit var prefs: SamplePrefs
-    val viewModel by lazy { ViewModelProviders.of(this).get(SampleViewModel::class.java) }
+    private lateinit var binding: ActivityMainBinding
+    private val viewModel by lazy { ViewModelProviders.of(this).get(DemoViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        prefs = SamplePrefs(this, "sample")
+        AndroidThreeTen.init(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        binding.apply {
-            togglePref = prefs.togglePref
-            countPref = prefs.countPref
-            decimalPref = prefs.decimalPref
-            wordPref = prefs.wordPref
-        }
 
-        updatePrefs()
-        initViewModelObservers()
-
-        binding.counter.setOnClickListener {
-            viewModel.changeLiveNumber(Random().nextInt(2))
-            //viewModel.postLiveNumber(Random().nextInt(2))
-        }
+        setupDemoClickListeners()
+        setupLiveDataObservers()
     }
 
-    private fun initViewModelObservers() {
-        viewModel.dummyLiveData.observe(this) {
-            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
-        }
+    private fun setupDemoClickListeners() {
+        binding.demoDistinctLiveData.setOnClickListener {viewModel.demoDistinctLiveData() }
+        binding.demoChangeDistinctLiveDataValue.setOnClickListener { viewModel.demoChangeDistinctLiveDataValue() }
+        binding.demoPostChangeDistinctLiveDataValue.setOnClickListener { viewModel.postChangeDistinctLiveDataValue() }
+        binding.demoSingleLiveEvent.setOnClickListener { viewModel.callSingleLiveEvent() }
+
+        // Prefs
+        binding.demoIntPref.setOnClickListener { viewModel.setIntPref() }
+        binding.demoBooleanPref.setOnClickListener { viewModel.setBooleanPref() }
+        binding.demoFloatPref.setOnClickListener { viewModel.setFloatPref() }
+        binding.demoLongPref.setOnClickListener { viewModel.setLongPref() }
+        binding.demoStringPref.setOnClickListener { viewModel.setStringPref() }
+        binding.demoStringSetPref.setOnClickListener { viewModel.setStringSetPref() }
+        binding.demoLocalTimePref.setOnClickListener { viewModel.setLocalTimePref() }
     }
 
-    // Changes reflected in sample.xml located in the shared_prefs dir
-    private fun updatePrefs() {
-        prefs.countPref = 10
-        prefs.decimalPref = 0f
-        prefs.togglePref = true
-        prefs.wordPref = "saved"
+    private fun setupLiveDataObservers() {
+        viewModel.distinctLiveData.observeNonNull(this) {
+            Toast.makeText(this, "Distinct Value: $it", Toast.LENGTH_LONG).show()
+        }
+
+        viewModel.singleLiveEvent.observe(this) {
+            Toast.makeText(this, "Single live event triggered", Toast.LENGTH_LONG).show()
+        }
+
+        // Prefs
+        viewModel.prefs.demoIntPrefLiveData.observeNonNull(this) {
+            binding.demoIntPref.text = "Int Pref: $it"
+        }
+
+        viewModel.prefs.demoBooleanPrefLiveData.observeNonNull(this) {
+            binding.demoBooleanPref.text = "Boolean Pref: $it"
+        }
+
+        viewModel.prefs.demoFloatPrefLiveData.observeNonNull(this) {
+            binding.demoFloatPref.text = "Float Pref: $it"
+        }
+
+        viewModel.prefs.demoLongPrefLiveData.observeNonNull(this) {
+            binding.demoLongPref.text = "Long Pref: $it"
+        }
+
+        viewModel.prefs.demoStringPrefLiveData.observeNonNull(this) {
+            binding.demoStringPref.text = "String Pref: $it"
+        }
+
+        viewModel.prefs.demoStringSetPrefLiveData.observeNonNull(this) {
+            binding.demoStringSetPref.text = "String Set Pref: $it"
+        }
+
+        viewModel.prefs.demoLocalTimePrefLiveData.observeNonNull(this) {
+            binding.demoLocalTimePref.text = "LocalTime Pref: $it"
+        }
     }
 }

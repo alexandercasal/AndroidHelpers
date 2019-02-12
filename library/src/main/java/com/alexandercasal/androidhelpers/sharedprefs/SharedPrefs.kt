@@ -22,18 +22,22 @@ abstract class SharedPrefs(private val context: Context, private val fileName: S
         context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
     }
 
-    fun intPref(defValue: Int = 0, key: String) = Pref(defValue, key)
-    fun booleanPref(defValue: Boolean = false, key: String) = Pref(defValue, key)
-    fun floatPref(defValue: Float = 0f, key: String) = Pref(defValue, key)
-    fun longPref(defValue: Long = 0L, key: String) = Pref(defValue, key)
-    fun stringPref(defValue: String = "", key: String) = Pref(defValue, key)
+    protected fun intPref(defValue: Int = 0, key: String) = Pref(defValue, key)
+    protected fun booleanPref(defValue: Boolean = false, key: String) = Pref(defValue, key)
+    protected fun floatPref(defValue: Float = 0f, key: String) = Pref(defValue, key)
+    protected fun longPref(defValue: Long = 0L, key: String) = Pref(defValue, key)
+    protected fun stringPref(defValue: String = "", key: String) = Pref(defValue, key)
 
     @Suppress("MemberVisibilityCanBePrivate")
     inner class Pref<T>(val defValue: T, val key: String) : ReadWriteProperty<SharedPrefs, T> {
-        var value: T = defValue
+        private var cacheValue: T = getValueInternal()
+
+        override fun getValue(thisRef: SharedPrefs, property: KProperty<*>): T {
+            return getValueInternal()
+        }
 
         @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
-        override fun getValue(thisRef: SharedPrefs, property: KProperty<*>): T {
+        private fun getValueInternal(): T {
             return when (defValue) {
                 is Boolean -> sharedPreferences.getBoolean(key, defValue)
                 is Float -> sharedPreferences.getFloat(key, defValue)
@@ -45,8 +49,8 @@ abstract class SharedPrefs(private val context: Context, private val fileName: S
         }
 
         override fun setValue(thisRef: SharedPrefs, property: KProperty<*>, value: T) {
-            if (this.value != value) {
-                this.value = value
+            if (this.cacheValue != value) {
+                this.cacheValue = value
                 val editor = sharedPreferences.edit()
 
                 when (value) {
@@ -76,15 +80,15 @@ abstract class SharedPrefs(private val context: Context, private val fileName: S
 
     @Suppress("MemberVisibilityCanBePrivate")
     inner class StringSetPref(val defValue: Set<String>?, val key: String) : ReadWriteProperty<SharedPrefs, Set<String>?> {
-        var value: Set<String>? = defValue
+        private var cacheValue: Set<String>? = sharedPreferences.getStringSet(key, defValue)
 
         override fun getValue(thisRef: SharedPrefs, property: KProperty<*>): Set<String>? {
             return sharedPreferences.getStringSet(key, defValue)
         }
 
         override fun setValue(thisRef: SharedPrefs, property: KProperty<*>, value: Set<String>?) {
-            if (this.value != value) {
-                this.value = value
+            if (this.cacheValue != value) {
+                this.cacheValue = value
                 sharedPreferences.edit().putStringSet(key, value).apply()
             }
         }
@@ -101,18 +105,22 @@ abstract class SharedPrefs(private val context: Context, private val fileName: S
      */
     @Suppress("MemberVisibilityCanBePrivate")
     inner class LocalTimePref(val defValue: LocalTime?, val key: String) : ReadWriteProperty<SharedPrefs, LocalTime?> {
-        var value: LocalTime? = defValue
+        private var cacheValue: LocalTime? = getValueInternal(defValue)
 
         override fun getValue(thisRef: SharedPrefs, property: KProperty<*>): LocalTime? {
-            val timeString: String? = sharedPreferences.getString(key, defValue?.format(DateTimeUtil.localTimeFormatter))
+            return getValueInternal(cacheValue)
+        }
+
+        private fun getValueInternal(fallback: LocalTime?): LocalTime? {
+            val timeString: String? = sharedPreferences.getString(key, fallback?.format(DateTimeUtil.localTimeFormatter))
             timeString ?: return null
 
-            return DateTimeUtil.toLocalTime(timeString, value)
+            return DateTimeUtil.toLocalTime(timeString, fallback)
         }
 
         override fun setValue(thisRef: SharedPrefs, property: KProperty<*>, value: LocalTime?) {
-            if (this.value != value) {
-                this.value = value
+            if (this.cacheValue != value) {
+                this.cacheValue = value
                 sharedPreferences.edit().putString(key, value?.format(DateTimeUtil.localTimeFormatter)).apply()
             }
         }
