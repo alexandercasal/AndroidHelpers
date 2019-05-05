@@ -50,15 +50,15 @@ fun <T> LiveData<T>.getDistinct(): LiveData<T> {
 }
 
 inline fun <T> LiveData<T>.observe(owner: LifecycleOwner, crossinline observer: (t: T?) -> Unit) {
-    observe(owner, Observer {
-        observer(it)
+    observe(owner, Observer { data ->
+        observer(data)
     })
 }
 
 inline fun <T> LiveData<T>.observeNonNull(owner: LifecycleOwner, crossinline observer: (t: T) -> Unit) {
-    observe(owner) {
-        it?.let {
-            observer(it)
+    observe(owner) { data ->
+        data?.let { nonNullData ->
+            observer(nonNullData)
         }
     }
 }
