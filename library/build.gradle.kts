@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -6,8 +8,12 @@ plugins {
 
 group = "com.github.alexandercasal"
 
-val appVersionCode = 11
-val appVersionName = "1.1.1"
+val appVersionCode = 20
+val appVersionName = "2.0.0"
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+}
 
 android {
     compileSdkVersion(AndroidSdk.COMPILE)
@@ -15,11 +21,20 @@ android {
     defaultConfig {
         minSdkVersion(AndroidSdk.MIN)
         targetSdkVersion(AndroidSdk.TARGET)
+        multiDexEnabled = true
 
         versionCode = appVersionCode
         versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled = true
+
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -34,9 +49,8 @@ dependencies {
 
     implementation(Deps.KOTLIN_STD_LIB)
 
+    coreLibraryDesugaring(Deps.ANDROID_DESUGAR_JDK_LIBS)
     compileOnly(Deps.ARCH_LIFECYCLE_LIVEDATA)
-
-    compileOnly(Deps.THREETEN_ABP)
     implementation(Deps.TIMBER)
 
     // Testing

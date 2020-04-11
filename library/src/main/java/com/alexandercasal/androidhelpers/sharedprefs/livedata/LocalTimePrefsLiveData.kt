@@ -2,7 +2,7 @@ package com.alexandercasal.androidhelpers.sharedprefs.livedata
 
 import android.content.SharedPreferences
 import com.alexandercasal.androidhelpers.sharedprefs.SharedPrefs
-import org.threeten.bp.LocalTime
+import java.time.LocalTime
 
 class LocalTimePrefsLiveData(
     sharedPreferences: SharedPreferences,

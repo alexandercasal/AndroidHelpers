@@ -9,8 +9,8 @@ import com.alexandercasal.androidhelpers.sharedprefs.livedata.LocalTimePrefsLive
 import com.alexandercasal.androidhelpers.sharedprefs.livedata.LongSharedPrefsLiveData
 import com.alexandercasal.androidhelpers.sharedprefs.livedata.StringSetSharedPrefsLiveData
 import com.alexandercasal.androidhelpers.sharedprefs.livedata.StringSharedPrefsLiveData
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import timber.log.Timber
 import java.lang.IllegalArgumentException
 import kotlin.properties.ReadWriteProperty
@@ -97,8 +97,8 @@ abstract class SharedPrefs(private val context: Context, private val fileName: S
     }
 
     /**
-     * Manages storing and retrieving a [LocalTime][org.threeten.bp.LocalTime] directly as a shared preference.
-     * The LocalTime will be stored as a [String] formatted in [ISO_LOCAL_TIME][org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_TIME].
+     * Manages storing and retrieving a [LocalTime][java.time.LocalTime] directly as a shared preference.
+     * The LocalTime will be stored as a [String] formatted in [ISO_LOCAL_TIME][java.time.format.DateTimeFormatter.ISO_LOCAL_TIME].
      *
      * While malformatted time strings will be guarded against, any indirect operations on this preference that result in a differently
      * formatted String may result in unexpected behavior.

@@ -3,12 +3,11 @@ package com.alexandercasal.androidhelpers.sample
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.alexandercasal.androidhelpers.livedata.SingleLiveEvent
 import com.alexandercasal.androidhelpers.livedata.getDistinct
 import com.alexandercasal.androidhelpers.livedata.postIfChanged
 import com.alexandercasal.androidhelpers.livedata.updateIfChanged
-import org.threeten.bp.LocalTime
+import java.time.LocalTime
 import kotlin.random.Random
 
 class DemoViewModel(application: Application) : AndroidViewModel(application) {

@@ -2,7 +2,7 @@ package com.alexandercasal.androidhelpers.sample
 
 import android.content.Context
 import com.alexandercasal.androidhelpers.sharedprefs.SharedPrefs
-import org.threeten.bp.LocalTime
+import java.time.LocalTime
 
 class SamplePrefs(context: Context, filename: String) : SharedPrefs(context, filename) {
 

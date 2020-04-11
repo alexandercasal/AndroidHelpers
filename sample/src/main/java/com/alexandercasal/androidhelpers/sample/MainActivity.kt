@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.alexandercasal.androidhelpers.livedata.observe
 import com.alexandercasal.androidhelpers.livedata.observeNonNull
 import com.alexandercasal.androidhelpers.sample.databinding.ActivityMainBinding
-import com.jakewharton.threetenabp.AndroidThreeTen
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,7 +16,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidThreeTen.init(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         setupDemoClickListeners()
